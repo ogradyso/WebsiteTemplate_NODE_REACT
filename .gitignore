@@ -138,6 +138,9 @@ node_modules
 **/node_modules
 *.sublime*
 
+.*
+!/.gitignore
+*~
 psd
 thumb
 sketch

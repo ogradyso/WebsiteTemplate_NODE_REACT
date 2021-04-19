@@ -99,6 +99,7 @@ storybook-static
 
 # rollup.js default build output
 dist/
+**/dist
 
 # Gatsby files
 .cache/
@@ -134,8 +135,11 @@ temp/
 **/*.back.*
 
 node_modules
-
+**/node_modules
 *.sublime*
+
+.*
+!/.gitignore
 
 psd
 thumb
