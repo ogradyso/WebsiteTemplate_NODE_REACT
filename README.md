@@ -5,6 +5,9 @@ This project is a template project for building a simple website with a ReactJS 
 This project has been created using **webpack-cli**, and is based on the Email application in Chapters 8 and 9 of Frank Zammetti's Modern Full Stack Development book, you can now run
 
 ```
+cd into server directory and run:
+npm run dev
+open a separate terminal and cd into client directory and run:
 npm run build
 ```
 
