@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-		"compile": "npx tsc && node ./dist/main.js",
-		"dev": "node ./node_modules/nodemon/bin/nodemon.js -e ts --exec \"npm run compile\""
+    "compile": "npx tsc && node ./dist/main.js",
+    "dev": "node ./node_modules/nodemon/bin/nodemon.js -e ts --exec \"npm run compile\""
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +16,7 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "xml2json": "^0.12.0"
   }
 }
