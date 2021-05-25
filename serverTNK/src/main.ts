@@ -10,6 +10,28 @@ app.use("/",express.static(path.join(__dirname, "../../realmTNK/dist")));
 let blogData = require('./blogs/blogList.json');
 let fs = require('fs');
 let parser = require('xml2json');
+let XMLWriter = require('xml-writer');
+const mariadb = require('mariadb');
+const pool = mariadb.createPool({
+	host: "test",
+	user: "test",
+	password: "test",
+	database: "test"
+});
+async function asyncFunction() {
+	let conn;
+	try {
+		conn = await pool.getConnection();
+		const res = await conn.query("SELECT * FROM blogs");
+		console.log(res);
+	} catch (err) {
+		console.log("error found");
+			throw err;
+	} finally {
+			if (conn) return conn.end();
+	}
+}
+
 
 app.use(function(inRequest: Request, inResponse: Response, inNext: NextFunction) {
 	inResponse.header("Access-Control-Allow-Origin", "*");
@@ -18,32 +40,42 @@ app.use(function(inRequest: Request, inResponse: Response, inNext: NextFunction)
 	inNext();
 });
 
-//get list of blogs
-app.get("/blogs",
+app.post("/saveBlog",
 	async (inRequest, inResponse: Response) => {
-		console.log("GET /blogs");
+		console.log("POST /saveBlog");
 		try {
-			console.log(blogData);
+				console.log(blogData);
+			blogData.blogs.push(
+				{"title": 'ExampleBlog4',
+				 "dateWritten": '2021-05-22',
+				 "blogFilename":'blog4.xml'			
+				}
+			);
+			var updateBlogData = JSON.stringify(blogData);
+			fs.writeFile('./blogs/blogList.json', updateBlogData, function(err:any, result:any){
+				if(err) console.log('error', err);
+			});
 			inResponse.json(blogData);
 		} catch (inError) {
-			console.log("GET /mailboxes: Error", inError);
+			console.log("POST /saveBlog: Error", inError);
 			inResponse.send("error");
 		}		
 	}
 );
-//get selected blog data:
-app.get("/getSelectedBlogPost/:blogFilepath",
-	(inRequest: Request, inResponse: Response) => {
-		console.log("GET /getSelectedBlogPost");
+
+
+//get list of blogs
+app.get("/blogs",
+	async (inRequest, inResponse: Response) => {
+		console.log("GET /blogs");
+		let conn;
 		try {
-			console.log(inRequest.params.blogFilepath);
-			let data = fs.readFileSync(process.cwd() + "/dist/blogs/current/" + inRequest.params.blogFilepath);
-			//let data = fs.readFileSync(process.cwd() + '/dist/blogs/current/blog1.xml');
-			let jsonBlogData = parser.toJson(data);
-			console.log("to json ->", jsonBlogData);
-			inResponse.json(JSON.parse(jsonBlogData));	
+			conn = await pool.getConnection();
+			const res = await conn.query("SELECT * FROM blogs");
+			console.log(res);
+			inResponse.json(res);
 		} catch (inError) {
-			console.log("GET /mailboxes: Error", inError);
+			console.log("GET /blogs: Error", inError);
 			inResponse.send("error");
 		}		
 	}
