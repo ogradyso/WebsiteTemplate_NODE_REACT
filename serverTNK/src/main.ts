@@ -7,16 +7,21 @@ app.use(express.json());
 
 app.use("/",express.static(path.join(__dirname, "../../realmTNK/dist")));
 
+require('dotenv').config()
 let blogData = require('./blogs/blogList.json');
 let fs = require('fs');
 let parser = require('xml2json');
 let XMLWriter = require('xml-writer');
 const mariadb = require('mariadb');
+const hostname = process.env.HOST;
+const databaseName = process.env.DATABASE;
+const password = process.env.PASSWORD;
+const username = process.env.USERNAME;
 const pool = mariadb.createPool({
-	host: "test",
-	user: "test",
-	password: "test",
-	database: "test"
+	host: hostname,
+	user: username,
+	password: password,
+	database: databaseName
 });
 async function asyncFunction() {
 	let conn;
