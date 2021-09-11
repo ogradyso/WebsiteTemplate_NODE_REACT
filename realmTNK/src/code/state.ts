@@ -3,47 +3,42 @@ import axios, { AxiosResponse } from "axios";
 
 export function createState(inParentComponent) {
 	return {
-		pleaseWaitVisible : false,
 		currentView : "welcome",
 		blogList: [],
 		currentBlog: null,
 		blogTitle: "placeholder",
 		blogBody: [],
 		blogCreateEdit: "hide",
+		blogId: "",
 	
 		setCurrentBlog : async function(newCurrentBlog): Promise<void> {
-			console.log("Blog to change:" + newCurrentBlog.title);
+			console.log("Blog to change:" + newCurrentBlog.Title);
 			await inParentComponent.setState({
-				currentBlog: newCurrentBlog			
+				blogId: newCurrentBlog.BlogID,
+				blogTitle: newCurrentBlog.Title,
+			blogBody: newCurrentBlog.BlogBody,
+			blogCreateEdit :"hide"
 			});
-			inParentComponent.state.getSelectedBlogPost();
 			}.bind(inParentComponent),
 
-		getBlogList : function(): void {
-			fetch('/blogs')
+			getBlogList : function(): void {
+			let fetchHeaders =	{key: 'max-age', value:'0'};
+			fetch('/blogs',{ headers:fetchHeaders})
 				.then(res => res.json())
 				.then(response => {
-					console.log(response.blogs);
+					console.log(response[0]);
 					inParentComponent.setState({
-						blogList: response.blogs,
-						currentBlog: response.blogs[response.blogs.length-1]
+						blogList: response,
+						blogTitle: response[response.length -1].Title,
+						blogBody: response[response.length-1].BlogBody,
+						blogId: response[response.length-1].BlogID
 					})
 					console.log(this.state.currentBlog);
 					console.log(this.state.blogList);
 				}).catch(err => {
 					console.log(err);
 				})
-		}.bind(inParentComponent),
-
-		getSelectedBlogPost : async function(): Promise<void> {
-			const response: AxiosResponse = await axios.get(`http://localhost:80/getSelectedBlogPost/${inParentComponent.state.currentBlog.blogFilename}`);
-			console.log(response);
-			inParentComponent.setState({
-				blogTitle : response.data.blog.title,
-				blogBody : response.data.blog.body.element	
-			});
-			console.log(this.state.blogTitle);
-			console.log(this.state.blogBody);
 		}.bind(inParentComponent)
-	};
+
+	}
 }
